@@ -6,6 +6,8 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var mongoUtil = require('./routes/dbconnection/db') 
+var singupController = require('./routes/controllers/signupController')
 
 var app = express();
 
@@ -19,13 +21,22 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// con.database();
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/signup', singupController)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+
+mongoUtil.connectToServer( function( err, client ) {
+  if (err) console.log(err);
+  // start the rest of your app here
+} );
 
 // error handler
 app.use(function(err, req, res, next) {
@@ -37,5 +48,11 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+      //   // Initialize the app.
+      //   var server = app.listen(process.env.PORT || LOCAL_PORT, function () {
+      //     var port = server.address().port;
+      //     console.log("App now running on port", port);
+      // });
 
 module.exports = app;
