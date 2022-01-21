@@ -9,9 +9,9 @@ var singupCreate = async function singupCreate(req, res) {
             var lastindexValue
             var insertQuery
             var crossCheckingApartment
-            crossCheckingApartment = await signupRepo.getApartmentName(signup["ApartmentName"])
+            crossCheckingApartment = await signupRepo.getApartmentByMobileNumber(signup["MobileNumber"])
             if (crossCheckingApartment.length > 0) {
-                return reject({ code: "ERROR", message: "Your Apartment Name is Already Exist" })
+                return reject({ code: "ERROR", message: "Your Mobile Number is Already Existed" })
 
             }
 
