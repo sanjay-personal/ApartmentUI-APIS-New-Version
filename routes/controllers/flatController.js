@@ -13,4 +13,15 @@ router.get("/", async function (req, res) {
     }
 });
 
+router.post("/", async function (req, res) {
+    try {
+        var postFlats = await flatService.postFlats(req, res)
+        console.log("postFlats", postFlats)
+        res.json({ status: postFlats})
+    } catch (error) {
+        console.log("signupCreateerror", error)
+        res.json({ status: error })
+    }
+});
+
 module.exports = router;

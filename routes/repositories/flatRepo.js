@@ -12,9 +12,49 @@ var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumbe
     });
 }
 
-var getFlatsByApartmentId = function getFlatsByApartmentId(mobileNumber) {
+var getFlatsByApartmentId = function getFlatsByApartmentId(ApartmentId) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("apartment_master").find({ "MobileNumber": mobileNumber,"Active": "1" }).toArray().then(res => {
+        database.getDb().collection("flat_master").find({ "ApartmentId": ApartmentId,"Active": "1" }).toArray().then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var getTotalFlats = function getTotalFlats() {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").find({}).toArray().then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var onFlatQuery = function onFlatQuery(FlatNumber,ApartmentId) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").findOne({"ApartmentId":ApartmentId , "FlatNumber": FlatNumber }).then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var onFlatBlockQuery = function onFlatBlockQuery(BlockNumber,FlatNumber,ApartmentId) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").findOne({"ApartmentId":ApartmentId ,"BlockNumber":BlockNumber,"FlatNumber": FlatNumber }).then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var insertFlat = function insertFlat(flatData) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").insertOne(flatData).then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -25,5 +65,9 @@ var getFlatsByApartmentId = function getFlatsByApartmentId(mobileNumber) {
 
 module.exports = {
     getApartmentByMobileNumber: getApartmentByMobileNumber,
-    getFlatsByApartmentId:getFlatsByApartmentId
+    getFlatsByApartmentId:getFlatsByApartmentId,
+    getTotalFlats: getTotalFlats,
+    onFlatQuery:onFlatQuery,
+    insertFlat:insertFlat,
+    onFlatBlockQuery:onFlatBlockQuery
 }
