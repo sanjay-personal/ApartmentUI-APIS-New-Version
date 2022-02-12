@@ -23,5 +23,14 @@ router.post("/", async function (req, res) {
         res.json({ status: error })
     }
 });
-
+router.post("/flatStatus", async function (req, res) {
+    try {
+        var flatStatus = await flatService.flatStatus(req, res)
+        console.log("flatStatus", flatStatus)
+        res.json({ status: flatStatus})
+    } catch (error) {
+        console.log("signupCreateerror", error)
+        res.json({ status: error })
+    }
+});
 module.exports = router;

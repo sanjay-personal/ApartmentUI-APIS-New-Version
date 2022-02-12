@@ -14,7 +14,17 @@ var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumbe
 
 var getFlatsByApartmentId = function getFlatsByApartmentId(ApartmentId) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("flat_master").find({ "ApartmentId": ApartmentId,"Active": "1" }).toArray().then(res => {
+        database.getDb().collection("flat_master").find({ "ApartmentId": ApartmentId}).toArray().then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var flatIdByStatusUpdsteQuery= function flatIdByStatusUpdsteQuery(apartmentId,flatId, status) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").updateOne({"ApartmentId": apartmentId, "FlatId": flatId }, { $set: { "Active": status } }).then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -69,5 +79,6 @@ module.exports = {
     getTotalFlats: getTotalFlats,
     onFlatQuery:onFlatQuery,
     insertFlat:insertFlat,
-    onFlatBlockQuery:onFlatBlockQuery
+    onFlatBlockQuery:onFlatBlockQuery,
+    flatIdByStatusUpdsteQuery:flatIdByStatusUpdsteQuery
 }

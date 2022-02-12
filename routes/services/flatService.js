@@ -73,6 +73,36 @@ var postFlats = async function postFlats(req, res) {
 
 }
 
+
+var flatStatus = async function flatStatus(req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            jwt.verify(ensureToken(req, res), 'my_sceret_key', async (err, loggedUser) => {
+                if (err) {
+                    res.sendStatus(403);
+                } else {
+                    var body = req.body;
+        var status
+        var messageStatus
+                    if (body['Active'] === "1") {
+                        status = "0"
+                        messageStatus = "Successfully InActivated the Flat"
+                    } else {
+                        status = "1"
+                        messageStatus = "Successfully Activated the Flat"
+                    }
+                    await flatRepo.flatIdByStatusUpdsteQuery(body["ApartmentId"],body['FlatId'] ,status)
+                    resolve({ code: "SUCCESS", message: messageStatus })
+
+                }
+            });
+        } catch (error) {
+            reject(error)
+        }
+    })
+
+}
+
 function ensureToken(req, res) {
     const bearerHeader = req.headers['authorization'];
     if (typeof bearerHeader !== 'undefined') {
@@ -87,5 +117,6 @@ function ensureToken(req, res) {
 
 module.exports = {
     getFlats: getFlats,
-    postFlats:postFlats
+    postFlats:postFlats,
+    flatStatus:flatStatus
 }
