@@ -23,11 +23,33 @@ router.post("/", async function (req, res) {
         res.json({ status: error })
     }
 });
+
+router.put("/", async function (req, res) {
+    try {
+        var updateFlat = await flatService.updateFlat(req, res)
+        console.log("postFlats", updateFlat)
+        res.json({ status: updateFlat})
+    } catch (error) {
+        console.log("signupCreateerror", error)
+        res.json({ status: error })
+    }
+});
 router.post("/flatStatus", async function (req, res) {
     try {
         var flatStatus = await flatService.flatStatus(req, res)
         console.log("flatStatus", flatStatus)
         res.json({ status: flatStatus})
+    } catch (error) {
+        console.log("signupCreateerror", error)
+        res.json({ status: error })
+    }
+});
+
+router.get("/:apartmentId/:flatId", async function (req, res) {
+    try {
+        var getFlatByApartmentIdFlatId = await flatService.getFlatByApartmentIdFlatId(req, res)
+        console.log("getFlatByApartmentIdFlatId", getFlatByApartmentIdFlatId)
+        res.json({ primary:getFlatByApartmentIdFlatId, status: { code: "SUCCESS", message: "Retrived Successfully" } })
     } catch (error) {
         console.log("signupCreateerror", error)
         res.json({ status: error })

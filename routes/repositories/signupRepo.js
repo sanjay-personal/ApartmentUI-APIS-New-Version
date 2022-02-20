@@ -1,9 +1,10 @@
 var manageError = require("../sharedFunctions")
-var database = require("../dbconnection/db")
+var database = require("../dbconnection/db");
+const { encoder } = require("../customFunctions/dataEncodeDecode");
 
 var onLoadSignupQuery = function onLoadSignupQuery() {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("sign_up").find({}).toArray().then(res => {
+        database.getDb().collection("users_master").find({}).toArray().then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -13,7 +14,7 @@ var onLoadSignupQuery = function onLoadSignupQuery() {
 
 var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumber) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("sign_up").find({ "MobileNumber": mobileNumber }).toArray().then(res => {
+        database.getDb().collection("users_master").find({ "MobileNumber": mobileNumber }).toArray().then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -24,7 +25,7 @@ var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumbe
 var insertQuery = function insertQuery(signup) {
     return new Promise((resolve, reject) => {
 
-        database.getDb().collection("sign_up").insertOne(signup, function (err, doc) {
+        database.getDb().collection("users_master").insertOne(signup, function (err, doc) {
             if (err) {
                 reject(err)
             } else {
@@ -34,9 +35,19 @@ var insertQuery = function insertQuery(signup) {
     })
 }
 
+var updateUser = function updateUser(apartmentId,mobileNumber,user) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").updateOne({ "ApartmentId":apartmentId,"MobileNumber": mobileNumber },{ $set: user }).then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
 var existedLogin = function  existedLogin(login) {
     return new Promise((resolve, reject) => {
-     database.getDb().collection("sign_up").findOne({ "ApartmentId": login.ApartmentId, "Password": md5(login.Password) }, function (err, doc) {
+     database.getDb().collection("users_master").findOne({ "ApartmentId": login.ApartmentId, "Password": encoder(login.Password) }, function (err, doc) {
             if (err) {
                 reject(err)
             } else {
@@ -45,11 +56,26 @@ var existedLogin = function  existedLogin(login) {
         })
     })
 }
+
+var getApartmentDetailsByApartmentId = function  getApartmentDetailsByApartmentId(ApartmentId) {
+    return new Promise((resolve, reject) => {
+     database.getDb().collection("users_master").findOne({ "ApartmentId": ApartmentId}, function (err, doc) {
+            if (err) {
+                reject(err)
+            } else {
+                resolve(doc)
+            }
+        })
+    })
+}
+
 
 
 module.exports = {
     onLoadSignupQuery: onLoadSignupQuery,
     insertQuery: insertQuery,
     getApartmentByMobileNumber: getApartmentByMobileNumber,
-    existedLogin: existedLogin
+    existedLogin: existedLogin,
+    getApartmentDetailsByApartmentId:getApartmentDetailsByApartmentId,
+    updateUser:updateUser
 }

@@ -1,5 +1,9 @@
 var flatRepo = require("../repositories/flatRepo")
 var jwt = require('jsonwebtoken');
+var dataEncoderDecoder = require('../customFunctions/dataEncodeDecode');
+var usersRepo = require("../repositories/signupRepo")
+
+
 
 var getFlats = async function getFlats(req, res) {
     return new Promise(async (resolve, reject) => {
@@ -58,7 +62,25 @@ var postFlats = async function postFlats(req, res) {
 
                     }
                     console.log("flat", flat)
+                    flatData['Password'] = dataEncoderDecoder.encoder(flatData['Password'])
+                    flatData['ConfirmPassword'] = dataEncoderDecoder.encoder(flatData['ConfirmPassword'])
+
                     if (flat === null) {
+                        if (flatData['Password'] === flatData['ConfirmPassword']) {
+                            let apartmentDetails = await usersRepo.getApartmentDetailsByApartmentId(flatData['ApartmentId'])
+                         let user =   {
+                                "ApartmentName" : apartmentDetails['ApartmentName'],
+                                "MobileNumber" : flatData['MobileNumber'],
+                                "Password" : flatData['Password'],
+                                "ConfirmPassword" : flatData['ConfirmPassword'],
+                                "ApartmentId" : flatData['ApartmentId'],
+                                "Created Date" : flatData['Created Date'],
+                                "Updated Date" :  flatData['Updated Date']
+                            }
+                            await usersRepo.insertQuery(user);
+                        } else {
+                            return reject({ code: "ERROR", message: "Password and ConfirmPassword are not matching" })
+                        }
                         await flatRepo.insertFlat(flatData)
                        resolve({ code: "SUCCESS", message: "New Flat Created Successfully" })
                     } else {
@@ -103,6 +125,85 @@ var flatStatus = async function flatStatus(req, res) {
 
 }
 
+
+
+var getFlatByApartmentIdFlatId = async function getFlatByApartmentIdFlatId(req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            jwt.verify(ensureToken(req, res), 'my_sceret_key', async (err, loggedUser) => {
+                if (err) {
+                    res.sendStatus(403);
+                } else {
+                   const flatId = req.params['flatId']
+                   const apartmentId = req.params['apartmentId'] 
+                   console.log("apartmentId, flatId",apartmentId, flatId)
+
+                    if (flatId !== undefined && apartmentId !== undefined) {
+                        console.log("apartmentId, flatId",apartmentId, flatId)
+                        const flat =  await flatRepo.editFlatByApartmentIdFlatId(apartmentId, flatId)
+                        flat['Password'] = dataEncoderDecoder.decoder(flat['Password'])
+                        flat['ConfirmPassword'] = dataEncoderDecoder.decoder(flat['ConfirmPassword'])
+                       resolve(flat)
+                    } else {
+                        return reject({ code: "ERROR", message: "FlatId or ApartmentId Missing" })
+                    }
+                }
+            });
+        } catch (error) {
+            reject(error)
+        }
+    })
+
+}
+
+
+var updateFlat = async function updateFlat(req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            jwt.verify(ensureToken(req, res), 'my_sceret_key', async (err, loggedUser) => {
+                if (err) {
+                    res.sendStatus(403);
+                } else {
+                    console.log("req.body",req.body)
+                    let flatData =  req.body;
+                    flatData['Updated Date'] = new Date();
+                    flatData['Active'] = "1";
+                    flatData['Password'] = dataEncoderDecoder.encoder(flatData['Password'])
+                    flatData['ConfirmPassword'] = dataEncoderDecoder.encoder(flatData['ConfirmPassword'])
+                    let flatId = req.body['FlatId'] ;
+                    let apartmentId = req.body['ApartmentId'] ;
+
+                    if (flatId !== undefined && apartmentId !== undefined) {
+                        console.log("apartmentId, flatId",apartmentId, flatId)
+                        if (flatData['Password'] === flatData['ConfirmPassword']) {
+                            let apartmentDetails = await usersRepo.getApartmentDetailsByApartmentId(flatData['ApartmentId'])
+                         let user =   {
+                                "ApartmentName" : apartmentDetails['ApartmentName'],
+                                "MobileNumber" : flatData['MobileNumber'],
+                                "Password" : flatData['Password'],
+                                "ConfirmPassword" : flatData['ConfirmPassword'],
+                                "ApartmentId" : flatData['ApartmentId'],
+                                "Created Date" : flatData['Created Date'],
+                                "Updated Date" :  flatData['Updated Date']
+                            }
+                            await usersRepo.updateUser(flatData['ApartmentId'],flatData['MobileNumber'],user);
+                        } else {
+                            return reject({ code: "ERROR", message: "Password and ConfirmPassword are not matching" })
+                        }
+                        await flatRepo.updateFlat(apartmentId, flatId, flatData)
+                       resolve({ code: "SUCCESS", message: "Flat Updated Sucessfully" })
+                    } else {
+                        return reject({ code: "ERROR", message: "FlatId or ApartmentId Missing" })
+                    }
+                }
+            });
+        } catch (error) {
+            reject(error)
+        }
+    })
+
+}
+
 function ensureToken(req, res) {
     const bearerHeader = req.headers['authorization'];
     if (typeof bearerHeader !== 'undefined') {
@@ -118,5 +219,7 @@ function ensureToken(req, res) {
 module.exports = {
     getFlats: getFlats,
     postFlats:postFlats,
-    flatStatus:flatStatus
+    flatStatus:flatStatus,
+    getFlatByApartmentIdFlatId:getFlatByApartmentIdFlatId,
+    updateFlat:updateFlat
 }

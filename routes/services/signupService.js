@@ -1,5 +1,5 @@
 var signupRepo = require("../repositories/signupRepo")
-var md5 = require('md5');
+var dataEncoderDecoder = require('../customFunctions/dataEncodeDecode');
 var singupCreate = async function singupCreate(req, res) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -24,11 +24,12 @@ var singupCreate = async function singupCreate(req, res) {
             }
 
             let ApartmentId = 'APSGMVDS' + i;
-            signup['Password'] = md5(signup['Password']);
-            signup['ConfirmPassword'] = md5(signup['ConfirmPassword']);
+            signup['Password'] = dataEncoderDecoder.encoder(signup['Password']);
+            signup['ConfirmPassword'] = dataEncoderDecoder.encoder(signup['ConfirmPassword']);
             signup['ApartmentId'] = ApartmentId;
             signup['Created Date'] = new Date();
             signup['Updated Date'] = new Date();
+            console.log("encoderrrrr",signup['Password'],dataEncoderDecoder.decoder(signup['Password']))
             if (signup['Password'] === signup['ConfirmPassword']) {
                 insertQuery = await signupRepo.insertQuery(signup);
                 return resolve(insertQuery)

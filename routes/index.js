@@ -7,9 +7,9 @@ var mongoUtil = require('.././routes/dbconnection/db')
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  // console.log("database22",await con.dbConnection.collection("sign_up").find({}).toArray())
-  // console.log("database22",await con.dbs.collection("sign_up").find({}).toArray())
-  console.log("database22",await  mongoUtil.getDb().collection("sign_up").find({}).toArray())
+  // console.log("database22",await con.dbConnection.collection("users_master").find({}).toArray())
+  // console.log("database22",await con.dbs.collection("users_master").find({}).toArray())
+  console.log("database22",await  mongoUtil.getDb().collection("users_master").find({}).toArray())
 
   // console.log("database22",await con.db())
 

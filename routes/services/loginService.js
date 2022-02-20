@@ -1,6 +1,7 @@
 var loginRepo = require("../repositories/loginRepo")
 var jwt = require('jsonwebtoken');
-var md5 = require('md5');
+var dataEncoderDecoder = require('../customFunctions/dataEncodeDecode');
+
 
 
 var existedLogin = async function existedLogin(loginData) {
@@ -8,7 +9,7 @@ var existedLogin = async function existedLogin(loginData) {
         try {
 
             var crossCheckingLogin
-            crossCheckingLogin = await loginRepo.getApartmentByMobileNumber(loginData["MobileNumber"],md5(loginData["Password"]))
+            crossCheckingLogin = await loginRepo.getApartmentByMobileNumber(loginData["MobileNumber"],dataEncoderDecoder.encoder(loginData["Password"]))
             if (crossCheckingLogin.length > 0) {
                 console.log("crossCheckingLogin",crossCheckingLogin)
                  const token = jwt.sign({ loginData }, 'my_sceret_key');

@@ -4,7 +4,7 @@ var database = require("../dbconnection/db")
 
 var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumber) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("sign_up").findOne({ "MobileNumber": mobileNumber }).then(res => {
+        database.getDb().collection("users_master").findOne({ "MobileNumber": mobileNumber }).then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -72,6 +72,28 @@ var insertFlat = function insertFlat(flatData) {
     });
 }
 
+var editFlatByApartmentIdFlatId = function editFlatByApartmentIdFlatId(apartmentId, flatId) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").findOne({ "ApartmentId":apartmentId,"FlatId": flatId }).then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var updateFlat = function updateFlat(apartmentId,flatId,flatData) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").updateOne({ "ApartmentId":apartmentId,"FlatId": flatId },{ $set: flatData }).then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+
+
 
 module.exports = {
     getApartmentByMobileNumber: getApartmentByMobileNumber,
@@ -80,5 +102,7 @@ module.exports = {
     onFlatQuery:onFlatQuery,
     insertFlat:insertFlat,
     onFlatBlockQuery:onFlatBlockQuery,
-    flatIdByStatusUpdsteQuery:flatIdByStatusUpdsteQuery
+    flatIdByStatusUpdsteQuery:flatIdByStatusUpdsteQuery,
+    editFlatByApartmentIdFlatId:editFlatByApartmentIdFlatId,
+    updateFlat :updateFlat
 }
