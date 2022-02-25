@@ -11,6 +11,8 @@ var mongoUtil = require('./routes/dbconnection/db')
 var singupController = require('./routes/controllers/signupController')
 var loginController = require('./routes/controllers/loginController')
 var flatController = require('./routes/controllers/flatController')
+var maintenanceController = require('./routes/controllers/maintenanceController')
+
 
 
 
@@ -33,6 +35,8 @@ app.use('/users', usersRouter);
 app.use('/signup', singupController)
 app.use('/login', loginController)
 app.use('/flats', flatController)
+app.use('/maintenance', maintenanceController)
+
 
 
 

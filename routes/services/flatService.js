@@ -47,8 +47,8 @@ var postFlats = async function postFlats(req, res) {
                     }
                 
                     let FlatId = 'APSGMVDSF' + i;
-                    flatData['Created Date'] = new Date();
-                    flatData['Updated Date'] = new Date();
+                    flatData['CreatedDate'] = new Date();
+                    flatData['UpdatedDate'] = new Date();
                     flatData['FlatId'] = FlatId;
                 
                     flatData['Active'] = "1";
@@ -74,8 +74,8 @@ var postFlats = async function postFlats(req, res) {
                                 "Password" : flatData['Password'],
                                 "ConfirmPassword" : flatData['ConfirmPassword'],
                                 "ApartmentId" : flatData['ApartmentId'],
-                                "Created Date" : flatData['Created Date'],
-                                "Updated Date" :  flatData['Updated Date']
+                                "CreatedDate" : flatData['CreatedDate'],
+                                "UpdatedDate" :  flatData['UpdatedDate']
                             }
                             await usersRepo.insertQuery(user);
                         } else {
@@ -166,7 +166,7 @@ var updateFlat = async function updateFlat(req, res) {
                 } else {
                     console.log("req.body",req.body)
                     let flatData =  req.body;
-                    flatData['Updated Date'] = new Date();
+                    flatData['UpdatedDate'] = new Date();
                     flatData['Active'] = "1";
                     flatData['Password'] = dataEncoderDecoder.encoder(flatData['Password'])
                     flatData['ConfirmPassword'] = dataEncoderDecoder.encoder(flatData['ConfirmPassword'])
@@ -183,8 +183,8 @@ var updateFlat = async function updateFlat(req, res) {
                                 "Password" : flatData['Password'],
                                 "ConfirmPassword" : flatData['ConfirmPassword'],
                                 "ApartmentId" : flatData['ApartmentId'],
-                                "Created Date" : flatData['Created Date'],
-                                "Updated Date" :  flatData['Updated Date']
+                                "CreatedDate" : flatData['CreatedDate'],
+                                "UpdatedDate" :  flatData['UpdatedDate']
                             }
                             await usersRepo.updateUser(flatData['ApartmentId'],flatData['MobileNumber'],user);
                         } else {

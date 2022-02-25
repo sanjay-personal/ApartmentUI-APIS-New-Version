@@ -27,8 +27,8 @@ var singupCreate = async function singupCreate(req, res) {
             signup['Password'] = dataEncoderDecoder.encoder(signup['Password']);
             signup['ConfirmPassword'] = dataEncoderDecoder.encoder(signup['ConfirmPassword']);
             signup['ApartmentId'] = ApartmentId;
-            signup['Created Date'] = new Date();
-            signup['Updated Date'] = new Date();
+            signup['CreatedDate'] = new Date();
+            signup['UpdatedDate'] = new Date();
             console.log("encoderrrrr",signup['Password'],dataEncoderDecoder.decoder(signup['Password']))
             if (signup['Password'] === signup['ConfirmPassword']) {
                 insertQuery = await signupRepo.insertQuery(signup);
