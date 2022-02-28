@@ -6,25 +6,43 @@ var dateModify = require("../customFunctions/dateModify");
 
 
 
-// var getFlats = async function getFlats(req, res) {
-//     return new Promise(async (resolve, reject) => {
-//         try {
-//             jwt.verify(ensureToken(req, res), 'my_sceret_key', async (err, loggedUser) => {
-//                 if (err) {
-//                     res.sendStatus(403);
-//                 } else {
-//                     console.log("loggedUser",loggedUser)
-//                     let loginApartmentDetails = await flatRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
-//                     let flatList = await flatRepo.getFlatsByApartmentId(loginApartmentDetails['ApartmentId'])
-//                     resolve(flatList)
-//                 }
-//             });
-//         } catch (error) {
-//             reject(error)
-//         }
-//     })
+var getMaintenance = async function getMaintenance(req, res) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            jwt.verify(ensureToken(req, res), 'my_sceret_key', async (err, loggedUser) => {
+                if (err) {
+                    res.sendStatus(403);
+                } else {
+                    console.log("loggedUser",loggedUser)
+                    let year
+                    let month 
+                    if(Object.keys(req.query).length === 0) {
+                     year = dateModify.getFormattedDate(new Date(),'YYYY')
+                     month = dateModify.getFormattedDate(new Date(),'MMMM')
 
-// }
+                    } else {
+                     year = req.query['year']
+                     month = req.query['month']
+
+                    }
+                    let loginApartmentDetails = await flatRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
+                    let flatList 
+                    if(month !== '') {
+                     flatList = await maintenanceRepo.getMaintenanceDateByApartmentIdQuery(loginApartmentDetails['ApartmentId'],month,year)
+
+                    } else {
+                        flatList = await maintenanceRepo.getMaintenanceDateByApartmentIdByYearQuery(loginApartmentDetails['ApartmentId'],year)
+
+                    }
+                    resolve(flatList)
+                }
+            });
+        } catch (error) {
+            reject(error)
+        }
+    })
+
+}
 
 var postMaintenance = async function postMaintenance(req, res) {
     return new Promise(async (resolve, reject) => {
@@ -94,6 +112,6 @@ function ensureToken(req, res) {
 }
 
 module.exports = {
-    // getFlats: getFlats,
+    getMaintenance: getMaintenance,
     postMaintenance:postMaintenance
 }

@@ -24,11 +24,34 @@ var onFlatNumberByMaintenanceDateQuery = function onFlatNumberByMaintenanceDateQ
     });
 }
 
+var getMaintenanceDateByApartmentIdQuery = function getMaintenanceDateByApartmentIdQuery(apartmentId,month,year) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("maintenance_master").find({ "ApartmentId":apartmentId,"Month":month,"Year":year}).toArray().then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var getMaintenanceDateByApartmentIdByYearQuery = function getMaintenanceDateByApartmentIdByYearQuery(apartmentId,year) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("maintenance_master").find({ "ApartmentId":apartmentId,"Year":year}).toArray().then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+
 
 
 
 
 module.exports = {
     onFlatNumberByMaintenanceDateQuery:onFlatNumberByMaintenanceDateQuery,
-    onFlatByMaintenancePostQuery:onFlatByMaintenancePostQuery
+    onFlatByMaintenancePostQuery:onFlatByMaintenancePostQuery,
+    getMaintenanceDateByApartmentIdQuery:getMaintenanceDateByApartmentIdQuery,
+    getMaintenanceDateByApartmentIdByYearQuery:getMaintenanceDateByApartmentIdByYearQuery
 }
