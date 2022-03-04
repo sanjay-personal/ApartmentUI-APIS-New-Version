@@ -1,5 +1,6 @@
 var signupRepo = require("../repositories/signupRepo")
 var dataEncoderDecoder = require('../customFunctions/dataEncodeDecode');
+var mailTransport = require('../customFunctions/mailTransport')
 var singupCreate = async function singupCreate(req, res) {
     return new Promise(async (resolve, reject) => {
         try {
@@ -32,6 +33,7 @@ var singupCreate = async function singupCreate(req, res) {
             console.log("encoderrrrr",signup['Password'],dataEncoderDecoder.decoder(signup['Password']))
             if (signup['Password'] === signup['ConfirmPassword']) {
                 insertQuery = await signupRepo.insertQuery(signup);
+                mailTransport.sendMail(signup)
                 return resolve(insertQuery)
             } else {
                 return reject({ code: "ERROR", message: "Password and ConfirmPassword are not matching" })
