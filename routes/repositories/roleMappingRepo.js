@@ -11,9 +11,9 @@ var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumbe
     });
 }
 
-var getRolesByApartmentIdWithRoleName = function getRolesByApartmentIdWithRoleName(ApartmentId,RoleName) {
+var getExisted = function getExisted(collectionName,ApartmentId,MobileNumber) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("role_master").findOne({ "ApartmentId": ApartmentId,"RoleName":RoleName}).then(res => {
+        database.getDb().collection("role_mapping_master").findOne({ "ApartmentId": ApartmentId,"MobileNumber":MobileNumber}).then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -24,17 +24,7 @@ var getRolesByApartmentIdWithRoleName = function getRolesByApartmentIdWithRoleNa
 
 
 
-var getRolesByApartmentId = function getRolesByApartmentId(ApartmentId,activeRoles) {
-    return new Promise((resolve, reject) => {
-        database.getDb().collection("role_master").find({ "ApartmentId": ApartmentId,"Active":activeRoles}).toArray().then(res => {
-            resolve(res)
-        }, (error) => {
-            return reject(error);
-        });
-    });
-}
-
-var getAllRolesByApartmentId = function getAllRolesByApartmentId(ApartmentId) {
+var getRolesMappingByApartmentId = function getRolesMappingByApartmentId(ApartmentId) {
     return new Promise((resolve, reject) => {
         database.getDb().collection("role_master").find({ "ApartmentId": ApartmentId}).toArray().then(res => {
             resolve(res)
@@ -54,9 +44,9 @@ var roleIdByStatusUpdateQuery= function roleIdByStatusUpdateQuery(apartmentId,Ro
     });
 }
 
-var getTotalRoles = function getTotalRoles() {
+var getTotalRolesMapping = function getTotalRolesMapping() {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("role_master").find({}).toArray().then(res => {
+        database.getDb().collection("role_mapping_master").find({}).toArray().then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -84,9 +74,9 @@ var onFlatBlockQuery = function onFlatBlockQuery(BlockNumber,FlatNumber,Apartmen
     });
 }
 
-var insertRole = function insertRole(roleData) {
+var insertRoleMapping = function insertRoleMapping(roleData) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("role_master").insertOne(roleData).then(res => {
+        database.getDb().collection("role_mapping_master").insertOne(roleData).then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -104,9 +94,9 @@ var editRoleByApartmentIdRoleId = function editRoleByApartmentIdRoleId(apartment
     });
 }
 
-var updateRole = function updateRole(apartmentId,roleId,flatData) {
+var updateUsersRole = function updateUsersRole(apartmentId,mobileNumber,roleMappingData) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("role_master").updateOne({ "ApartmentId":apartmentId,"RoleId": roleId },{ $set: flatData }).then(res => {
+        database.getDb().collection("users_master").updateOne({ "ApartmentId":apartmentId,"MobileNumber": mobileNumber },{ $set: roleMappingData }).then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
@@ -119,14 +109,13 @@ var updateRole = function updateRole(apartmentId,roleId,flatData) {
 
 module.exports = {
     getApartmentByMobileNumber: getApartmentByMobileNumber,
-    getRolesByApartmentId:getRolesByApartmentId,
-    getTotalRoles: getTotalRoles,
+    getRolesMappingByApartmentId:getRolesMappingByApartmentId,
+    getTotalRolesMapping: getTotalRolesMapping,
     onFlatQuery:onFlatQuery,
-    insertRole:insertRole,
+    insertRoleMapping:insertRoleMapping,
     onFlatBlockQuery:onFlatBlockQuery,
     roleIdByStatusUpdateQuery:roleIdByStatusUpdateQuery,
     editRoleByApartmentIdRoleId:editRoleByApartmentIdRoleId,
-    updateRole :updateRole,
-    getRolesByApartmentIdWithRoleName:getRolesByApartmentIdWithRoleName,
-    getAllRolesByApartmentId: getAllRolesByApartmentId
+    updateUsersRole :updateUsersRole,
+    getExisted:getExisted
 }

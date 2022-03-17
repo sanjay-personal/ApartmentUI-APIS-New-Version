@@ -13,6 +13,8 @@ var loginController = require('./routes/controllers/loginController')
 var flatController = require('./routes/controllers/flatController')
 var maintenanceController = require('./routes/controllers/maintenanceController')
 var roleController = require('./routes/controllers/roleController')
+var roleMappingController = require('./routes/controllers/roleMappingController')
+
 
 
 
@@ -40,6 +42,8 @@ app.use('/login', loginController)
 app.use('/flats', flatController)
 app.use('/maintenance', maintenanceController)
 app.use('/role', roleController)
+app.use('/rolemapping', roleMappingController)
+
 
 
 

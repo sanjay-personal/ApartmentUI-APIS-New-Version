@@ -12,9 +12,10 @@ var getFlats = async function getFlats(req, res) {
                 if (err) {
                     res.sendStatus(403);
                 } else {
-                    console.log("loggedUser",loggedUser)
+                    // console.log("loggedUser",loggedUser)
                     let loginApartmentDetails = await flatRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
-                    let flatList = await flatRepo.getFlatsByApartmentId(loginApartmentDetails['ApartmentId'])
+                    // console.log("req['query']['activeUsers']",req['query']['activeUsers'], req['query']['activeUsers'] != 0 ? "a" : "b")
+                    let flatList =  req['query']['activeUsers'] != 0 ? await flatRepo.getFlatsByApartmentId(loginApartmentDetails['ApartmentId'],req['query']['activeUsers']) : await flatRepo.getAllFlatsByApartmentId(loginApartmentDetails['ApartmentId'])
                     resolve(flatList)
                 }
             });
@@ -52,7 +53,7 @@ var postFlats = async function postFlats(req, res) {
                     flatData['FlatId'] = FlatId;
                 
                     flatData['Active'] = "1";
-                    console.log("flatData['BlockNumber']",flatData['BlockNumber'])
+                    // console.log("flatData['BlockNumber']",flatData['BlockNumber'])
                     let flat
                     if(!flatData['BlockNumber']) {
                      flat = await flatRepo.onFlatQuery(flatData['FlatNumber'],flatData['ApartmentId']);
@@ -61,7 +62,7 @@ var postFlats = async function postFlats(req, res) {
                      flat = await flatRepo.onFlatBlockQuery(flatData['BlockNumber'],flatData['FlatNumber'],flatData['ApartmentId']);
 
                     }
-                    console.log("flat", flat)
+                    // console.log("flat", flat)
                     flatData['Password'] = dataEncoderDecoder.encoder(flatData['Password'])
                     flatData['ConfirmPassword'] = dataEncoderDecoder.encoder(flatData['ConfirmPassword'])
 
@@ -136,10 +137,10 @@ var getFlatByApartmentIdFlatId = async function getFlatByApartmentIdFlatId(req, 
                 } else {
                    const flatId = req.params['flatId']
                    const apartmentId = req.params['apartmentId'] 
-                   console.log("apartmentId, flatId",apartmentId, flatId)
+                //    console.log("apartmentId, flatId",apartmentId, flatId)
 
                     if (flatId !== undefined && apartmentId !== undefined) {
-                        console.log("apartmentId, flatId",apartmentId, flatId)
+                        // console.log("apartmentId, flatId",apartmentId, flatId)
                         const flat =  await flatRepo.editFlatByApartmentIdFlatId(apartmentId, flatId)
                         flat['Password'] = dataEncoderDecoder.decoder(flat['Password'])
                         flat['ConfirmPassword'] = dataEncoderDecoder.decoder(flat['ConfirmPassword'])
@@ -164,7 +165,7 @@ var updateFlat = async function updateFlat(req, res) {
                 if (err) {
                     res.sendStatus(403);
                 } else {
-                    console.log("req.body",req.body)
+                    // console.log("req.body",req.body)
                     let flatData =  req.body;
                     flatData['UpdatedDate'] = new Date();
                     flatData['Active'] = "1";
@@ -174,7 +175,7 @@ var updateFlat = async function updateFlat(req, res) {
                     let apartmentId = req.body['ApartmentId'] ;
 
                     if (flatId !== undefined && apartmentId !== undefined) {
-                        console.log("apartmentId, flatId",apartmentId, flatId)
+                        // console.log("apartmentId, flatId",apartmentId, flatId)
                         if (flatData['Password'] === flatData['ConfirmPassword']) {
                             let apartmentDetails = await usersRepo.getApartmentDetailsByApartmentId(flatData['ApartmentId'])
                          let user =   {

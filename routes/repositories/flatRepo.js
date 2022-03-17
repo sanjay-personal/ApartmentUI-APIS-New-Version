@@ -12,7 +12,17 @@ var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumbe
     });
 }
 
-var getFlatsByApartmentId = function getFlatsByApartmentId(ApartmentId) {
+var getFlatsByApartmentId = function getFlatsByApartmentId(ApartmentId,activeusers) {
+    return new Promise((resolve, reject) => {
+        database.getDb().collection("flat_master").find({ "ApartmentId": ApartmentId,"Active":activeusers}).toArray().then(res => {
+            resolve(res)
+        }, (error) => {
+            return reject(error);
+        });
+    });
+}
+
+var getAllFlatsByApartmentId = function getAllFlatsByApartmentId(ApartmentId) {
     return new Promise((resolve, reject) => {
         database.getDb().collection("flat_master").find({ "ApartmentId": ApartmentId}).toArray().then(res => {
             resolve(res)
@@ -104,5 +114,6 @@ module.exports = {
     onFlatBlockQuery:onFlatBlockQuery,
     flatIdByStatusUpdsteQuery:flatIdByStatusUpdsteQuery,
     editFlatByApartmentIdFlatId:editFlatByApartmentIdFlatId,
-    updateFlat :updateFlat
+    updateFlat :updateFlat,
+    getAllFlatsByApartmentId:getAllFlatsByApartmentId
 }

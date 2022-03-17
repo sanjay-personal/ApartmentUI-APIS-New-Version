@@ -6,7 +6,7 @@ var encoder = function encoder(data) {
     // Encode the Buffer as a base64 string
     let base64String = bufferObj.toString("base64");
 
-    console.log("The encoded base64 string is:", base64String);
+    // console.log("The encoded base64 string is:", base64String);
 
     return base64String;
 
@@ -21,7 +21,7 @@ var decoder = function decoder(data) {
     // Encode the Buffer as a utf8 string
     let decodedString = bufferObj.toString("utf8");
 
-    console.log("The decoded string:", decodedString);
+    // console.log("The decoded string:", decodedString);
 
     return decodedString
 

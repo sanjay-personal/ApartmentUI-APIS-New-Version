@@ -2,7 +2,7 @@ var nodemailer = require('nodemailer');
 
 function sendMail(data) {
     // dont delete this comment 'https://myaccount.google.com/lesssecureapps' if you get error go beside link active the button
-    console.log("DATA", data)
+    // console.log("DATA", data)
     // pass https://stackoverflow.com/questions/60701936/error-invalid-login-application-specific-password-required
     var transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -21,7 +21,7 @@ function sendMail(data) {
 
     transporter.sendMail(mailOptions, function (error, info) {
         if (error) {
-            console.log("Mail error",error);
+            // console.log("Mail error",error);
         } else {
             console.log('Email info: ' + info);
             console.log('Email sent: ' + info.response);

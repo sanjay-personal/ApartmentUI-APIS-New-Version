@@ -13,7 +13,7 @@ var getMaintenance = async function getMaintenance(req, res) {
                 if (err) {
                     res.sendStatus(403);
                 } else {
-                    console.log("loggedUser",loggedUser)
+                    // console.log("loggedUser",loggedUser)
                     let year
                     let month 
                     if(Object.keys(req.query).length === 0) {
@@ -55,6 +55,7 @@ var postMaintenance = async function postMaintenance(req, res) {
         maintenanceData['CreatedDate'] = new Date();
         maintenanceData['UpdatedDate'] = new Date();
         maintenanceData['Month'] = dateModify.getFormattedDate(maintenanceData['MaintenanceDate'], 'MMMM');
+        maintenanceData['MonthNumber'] = dateModify.getFormattedDate(maintenanceData['MaintenanceDate'], 'M');
         maintenanceData['Year'] =dateModify.getFormattedDate(maintenanceData['MaintenanceDate'], 'YYYY')
         maintenanceData['Day'] =dateModify.getFormattedDate(maintenanceData['MaintenanceDate'], 'dddd')
         let maintenanceCheck = await maintenanceRepo.onFlatNumberByMaintenanceDateQuery(maintenanceData['ApartmentId'], maintenanceData['FlatId'], maintenanceData['Month'], maintenanceData['Year']);

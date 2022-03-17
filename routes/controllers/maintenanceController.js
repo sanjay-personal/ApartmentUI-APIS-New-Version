@@ -8,7 +8,7 @@ router.get("/", async function (req, res) {
         var getMaintenance = await maintenanceService.getMaintenance(req, res)
         res.json({ primary:getMaintenance, status: { code: "SUCCESS", message: "Retrived Successfully" } })
     } catch (error) {
-        console.log("getMaintenanceeerror", error)
+        // console.log("getMaintenanceeerror", error)
         res.json({ status: error })
     }
 });
@@ -16,10 +16,9 @@ router.get("/", async function (req, res) {
 router.post("/", async function (req, res) {
     try {
         var postMaintenance = await maintenanceService.postMaintenance(req, res)
-        console.log("postMaintenance", postMaintenance)
         res.json({ status: postMaintenance})
     } catch (error) {
-        console.log("postMaintenanceerror", error)
+        // console.log("postMaintenanceerror", error)
         res.json({ status: error })
     }
 });

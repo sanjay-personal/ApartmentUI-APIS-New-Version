@@ -1,18 +1,17 @@
-var roleRepo = require("../repositories/roleRepo")
+var roleMappingRepo = require("../repositories/roleMappingRepo")
 var jwt = require('jsonwebtoken');
 
 
 
-var getRoles = async function getRoles(req, res) {
+var getRolesMapping = async function getRolesMapping(req, res) {
     return new Promise(async (resolve, reject) => {
         try {
             jwt.verify(ensureToken(req, res), 'my_sceret_key', async (err, loggedUser) => {
                 if (err) {
                     res.sendStatus(403);
                 } else {
-                    let loginApartmentDetails = await roleRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
-                    console.log("req['query']['activeRoles']",req['query']['activeRoles'])
-                    let roleList = req['query']['activeRoles'] != 0 ? await roleRepo.getRolesByApartmentId(loginApartmentDetails['ApartmentId'],req['query']['activeRoles']) : await roleRepo.getAllRolesByApartmentId(loginApartmentDetails['ApartmentId'])  
+                    let loginApartmentDetails = await roleMappingRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
+                    let roleList = await roleMappingRepo.getRolesMappingByApartmentId(loginApartmentDetails['ApartmentId'])
                     resolve(roleList)
                 }
             });
@@ -23,41 +22,42 @@ var getRoles = async function getRoles(req, res) {
 
 }
 
-var postRole = async function postRole(req, res) {
+var postRoleMapping = async function postRoleMapping(req, res) {
     return new Promise(async (resolve, reject) => {
         try {
             jwt.verify(ensureToken(req, res), 'my_sceret_key', async (err, loggedUser) => {
                 if (err) {
                     res.sendStatus(403);
                 } else {
-                    var roleData = req.body;
+                    var roleMappingData = req.body;
 
 
                     var lastindex
                     var i = 0
                     var lastindexValue
-                    var lastindex = await roleRepo.getTotalRoles()
+                    var lastindex = await roleMappingRepo.getTotalRolesMapping()
                     if (lastindex.length === 0) {
-                        roleData['RoleId'] = 'APSGMVDSR0';
+                        roleMappingData['RoleMappingId'] = 'APSGMVDSRM0';
                     } else {
-                        lastindexValue = parseInt(lastindex[lastindex.length - 1]['RoleId'].replace("APSGMVDSR", ""));
+                        lastindexValue = parseInt(lastindex[lastindex.length - 1]['RoleMappingId'].replace("APSGMVDSRM", ""));
                         i = ++lastindexValue;
                     }
                 
-                    let RoleId = 'APSGMVDSR' + i;
-                    roleData['CreatedDate'] = new Date();
-                    roleData['UpdatedDate'] = new Date();
-                    roleData['RoleId'] = RoleId;
+                    let RoleMappingId = 'APSGMVDSRM' + i;
+                    roleMappingData['CreatedDate'] = new Date();
+                    roleMappingData['UpdatedDate'] = new Date();
+                    roleMappingData['RoleMappingId'] = RoleMappingId;
                 
-                    roleData['Active'] = "1";
-                    let loginApartmentDetails = await roleRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
-                    let role = await roleRepo.getRolesByApartmentIdWithRoleName(loginApartmentDetails['ApartmentId'],roleData['RoleName'])
-                    roleData['ApartmentId'] = loginApartmentDetails['ApartmentId']
+                    roleMappingData['Active'] = "1";
+                    // let loginApartmentDetails = await roleMappingRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
+                    let role = await roleMappingRepo.getExisted("role_mapping_master",roleMappingData['ApartmentId'],roleMappingData['MobileNumber'])
+
                     if (role === null) {
-                        await roleRepo.insertRole(roleData)
-                       resolve({ code: "SUCCESS", message: "New Role Created Successfully" })
+                        await roleMappingRepo.insertRoleMapping(roleMappingData)
+                        await roleMappingRepo.updateUsersRole(roleMappingData['ApartmentId'], roleMappingData['MobileNumber'], { "ApartmentId":roleMappingData['ApartmentId'],"MobileNumber": roleMappingData['MobileNumber'],"Roles":roleMappingData['Roles'], "UpdatedDate":roleMappingData['UpdatedDate'] })
+                       resolve({ code: "SUCCESS", message: "Role is Assigned Successfully" })
                     } else {
-                        return reject({ code: "ERROR", message: "Role is Already Existed" })
+                        return reject({ code: "ERROR", message: "Role Assigned is Already Existed" })
                     }
                 }
             });
@@ -86,7 +86,7 @@ var roleStatus = async function roleStatus(req, res) {
                         status = "1"
                         messageStatus = "Successfully Activated the Role"
                     }
-                    await roleRepo.roleIdByStatusUpdateQuery(body["ApartmentId"],body['RoleId'] ,status)
+                    await roleMappingRepo.roleIdByStatusUpdateQuery(body["ApartmentId"],body['RoleId'] ,status)
                     resolve({ code: "SUCCESS", message: messageStatus })
 
                 }
@@ -113,7 +113,7 @@ var getRoleByApartmentIdRoleId = async function getRoleByApartmentIdRoleId(req, 
 
                     if (roleId !== undefined && apartmentId !== undefined) {
                         // console.log("apartmentId, roleId",apartmentId, roleId)
-                        const role =  await roleRepo.editRoleByApartmentIdRoleId(apartmentId, roleId)
+                        const role =  await roleMappingRepo.editRoleByApartmentIdRoleId(apartmentId, roleId)
                        resolve(role)
                     } else {
                         return reject({ code: "ERROR", message: "RoleId or ApartmentId Missing" })
@@ -136,14 +136,14 @@ var updateRole = async function updateRole(req, res) {
                     res.sendStatus(403);
                 } else {
                     // console.log("req.body",req.body)
-                    let roleData =  req.body;
-                    roleData['UpdatedDate'] = new Date();
-                    roleData['Active'] = "1";
+                    let roleMappingData =  req.body;
+                    roleMappingData['UpdatedDate'] = new Date();
+                    roleMappingData['Active'] = "1";
                     let roleId = req.body['RoleId'] ;
                     let apartmentId = req.body['ApartmentId'] ;
 
                     if (roleId !== undefined && apartmentId !== undefined) {
-                        await roleRepo.updateRole(apartmentId, roleId, roleData)
+                        await roleMappingRepo.updateRole(apartmentId, roleId, roleMappingData)
                        resolve({ code: "SUCCESS", message: "Role Updated Sucessfully" })
                     } else {
                         return reject({ code: "ERROR", message: "RoleId or ApartmentId Missing" })
@@ -170,8 +170,8 @@ function ensureToken(req, res) {
 }
 
 module.exports = {
-    getRoles: getRoles,
-    postRole:postRole,
+    getRolesMapping: getRolesMapping,
+    postRoleMapping:postRoleMapping,
     roleStatus:roleStatus,
     getRoleByApartmentIdRoleId:getRoleByApartmentIdRoleId,
     updateRole:updateRole

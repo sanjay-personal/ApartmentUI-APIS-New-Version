@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
-var roleService = require("../services/roleService")
+var roleService = require("../services/roleMappingService")
 
 router.get("/", async function (req, res) {
     try {
-        var getRoles = await roleService.getRoles(req, res)
-        res.json({ primary:getRoles, status: { code: "SUCCESS", message: "Retrived Successfully" } })
+        var getRolesMapping = await roleService.getRolesMapping(req, res)
+        res.json({ primary:getRolesMapping, status: { code: "SUCCESS", message: "Retrived Successfully" } })
     } catch (error) {
         // console.log("signupCreateerror", error)
         res.json({ status: error })
@@ -14,8 +14,8 @@ router.get("/", async function (req, res) {
 
 router.post("/", async function (req, res) {
     try {
-        var postRole = await roleService.postRole(req, res)
-        res.json({ status: postRole})
+        var postRoleMapping = await roleService.postRoleMapping(req, res)
+        res.json({ status: postRoleMapping})
     } catch (error) {
         // console.log("signupCreateerror", error)
         res.json({ status: error })
