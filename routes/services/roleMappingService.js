@@ -49,6 +49,14 @@ var postRoleMapping = async function postRoleMapping(req, res) {
                     roleMappingData['RoleMappingId'] = RoleMappingId;
                 
                     roleMappingData['Active'] = "1";
+                   console.log("datttta",req["body"])
+
+                    roleMappingData['FlatNumber'] = roleMappingData["Flats"][0]["FlatNumber"];
+                    roleMappingData['FlatId'] = roleMappingData["Flats"][0]["FlatId"];
+                   console.log("iddd",roleMappingData["Flats"][0]["FlatNumber"],roleMappingData["Flats"][0]["FlatId"])
+                    roleMappingData['Roles'] = [roleMappingData['Roles'][0]['RoleName']];
+                    
+                  delete  roleMappingData['Flats'] // to remove flats key
                     // let loginApartmentDetails = await roleMappingRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
                     let role = await roleMappingRepo.getExisted("role_mapping_master",roleMappingData['ApartmentId'],roleMappingData['MobileNumber'])
 

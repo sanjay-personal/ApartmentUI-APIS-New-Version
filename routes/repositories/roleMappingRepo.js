@@ -26,7 +26,7 @@ var getExisted = function getExisted(collectionName,ApartmentId,MobileNumber) {
 
 var getRolesMappingByApartmentId = function getRolesMappingByApartmentId(ApartmentId) {
     return new Promise((resolve, reject) => {
-        database.getDb().collection("role_master").find({ "ApartmentId": ApartmentId}).toArray().then(res => {
+        database.getDb().collection("role_mapping_master").find({ "ApartmentId": ApartmentId}).toArray().then(res => {
             resolve(res)
         }, (error) => {
             return reject(error);
