@@ -11,7 +11,7 @@ var getApartmentByMobileNumber = function getApartmentByMobileNumber(mobileNumbe
     });
 }
 
-var getExisted = function getExisted(collectionName,ApartmentId,MobileNumber) {
+var getExisted = function getExisted(ApartmentId,MobileNumber) {
     return new Promise((resolve, reject) => {
         database.getDb().collection("role_mapping_master").findOne({ "ApartmentId": ApartmentId,"MobileNumber":MobileNumber}).then(res => {
             resolve(res)

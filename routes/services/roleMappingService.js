@@ -58,7 +58,7 @@ var postRoleMapping = async function postRoleMapping(req, res) {
                     
                   delete  roleMappingData['Flats'] // to remove flats key
                     // let loginApartmentDetails = await roleMappingRepo.getApartmentByMobileNumber(loggedUser['loginData']['MobileNumber'])
-                    let role = await roleMappingRepo.getExisted("role_mapping_master",roleMappingData['ApartmentId'],roleMappingData['MobileNumber'])
+                    let role = await roleMappingRepo.getExisted(roleMappingData['ApartmentId'],roleMappingData['MobileNumber'])
 
                     if (role === null) {
                         await roleMappingRepo.insertRoleMapping(roleMappingData)

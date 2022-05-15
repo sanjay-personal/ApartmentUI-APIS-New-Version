@@ -58,6 +58,7 @@ var postMaintenance = async function postMaintenance(req, res) {
         maintenanceData['MonthNumber'] = dateModify.getFormattedDate(maintenanceData['MaintenanceDate'], 'M');
         maintenanceData['Year'] =dateModify.getFormattedDate(maintenanceData['MaintenanceDate'], 'YYYY')
         maintenanceData['Day'] =dateModify.getFormattedDate(maintenanceData['MaintenanceDate'], 'dddd')
+        maintenanceData['Status'] = 'Paid'
         let maintenanceCheck = await maintenanceRepo.onFlatNumberByMaintenanceDateQuery(maintenanceData['ApartmentId'], maintenanceData['FlatId'], maintenanceData['Month'], maintenanceData['Year']);
             if (maintenanceCheck === null) {
                 await maintenanceRepo.onFlatByMaintenancePostQuery(maintenanceData);
