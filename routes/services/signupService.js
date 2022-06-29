@@ -6,7 +6,7 @@ var singupCreate = async function singupCreate(req, res) {
         try {
             var signup = req.body;
             var lastindex
-            var i = 0
+            var i = 0  
             var lastindexValue
             var insertQuery
             var crossCheckingApartment
